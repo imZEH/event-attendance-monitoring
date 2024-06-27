@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('user_details', function (Blueprint $table) {
             $table->id();
             $table->string('firstname');
-            $table->string('middlename');
+            $table->string('middlename')->nullable();
             $table->string('lastname');
-            $table->string('studentId');
-            $table->string('birthday');
-            $table->string('yearlevel');
-            $table->string('course');
+            $table->string('studentId')->nullable();
+            $table->string('birthday')->nullable();
+            $table->string('yearlevel')->nullable();
+            $table->string('course')->nullable();
             $table->string('userType');
             $table->unsignedBigInteger('userId');
             $table->foreign('userId')->references('id')->on('users');

@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Login</title>
+    <title>Login | Event Attendance Monitoring System</title>
 
     @include('partial.header_css')
 
@@ -17,8 +17,8 @@
 
 <body>
     <script>
-        if (sessionStorage.getItem("token")) {
-            window.location.href = "/admin";
+        if (sessionStorage.getItem("user")) {
+            window.location.href = "/";
         }
     </script>
 
@@ -50,6 +50,9 @@
                                         <h1 class="h1 text-gray-900 mb-4">Welcome!</h1>
                                     </div>
                                     <form id="loginForm" class="user">
+                                        <div id="errorMessageContainer" class="text-center d-none">
+                                            <p class="text-danger">Invalid Username or Password</p>
+                                        </div>
                                         <p>Please login to your account</p>
                                         <div class="form-group">
                                             <input type="email" class="form-control form-control-user" id="email"
@@ -59,7 +62,13 @@
                                             <input type="password" class="form-control form-control-user" id="password"
                                                 placeholder="Password">
                                         </div>
-                                        <input class="btn btn-primary btn-user btn-block" type="submit" value="Login">
+                                        <input id="loginButton" class="btn btn-primary btn-user btn-block" type="submit"
+                                            value="Login">
+                                        <button id="loginSpinner" class="btn btn-primary btn-user btn-block d-none"
+                                            type="submit" value="Login">
+                                            <span class="spinner-border spinner-border-sm" role="status"
+                                                aria-hidden="true"></span>
+                                        </button>
                                     </form>
                                 </div>
                             </div>
@@ -69,9 +78,9 @@
             </div>
         </div>
     </div>
-
-    @include('partial.footer_js')
     @vite('resources/js/auth.js')
+    @include('partial.footer_js')
+   
 </body>
 
 </html>

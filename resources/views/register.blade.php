@@ -9,13 +9,19 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Register</title>
+    <title>Register | Event Attendance Monitoring System</title>
 
     @include('partial.header_css')
 
 </head>
 
 <body>
+    <script>
+        if (sessionStorage.getItem("user")) {
+            window.location.href = "/";
+        }
+    </script>
+
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="mx-auto mx-sm-5 text-center">
             <!-- Centering content on tablets and mobile -->
@@ -27,7 +33,7 @@
 
         <ul class="navbar-nav ml-auto mr-lg-5 mr-xl-5 mr-sm-2 mr-md-2">
             <li class="nav-item dropdown no-arrow">
-            <a class="navbar-link" href="/"><b>Login Account</b></a>
+                <a class="navbar-link" href="/"><b>Login Account</b></a>
             </li>
         </ul>
     </nav>

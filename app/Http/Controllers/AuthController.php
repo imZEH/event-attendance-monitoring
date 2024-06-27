@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UserDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,9 +18,21 @@ class AuthController extends Controller
 
             $userId = $user->id;
 
-            return response()->json(['token' => 'Success', 'user_id' => $userId], 200);
+            $userDetail = $this->getUserById($userId);
+
+            return response()->json(['data' => $userDetail->original], 200);
         } else {
             return response()->json( [ 'error' => 'Unauthorized' ], 401 );
+        }
+    }
+
+    public function getUserById($id) {
+        $userDetail = UserDetail::find($id);
+    
+        if($userDetail) {
+            return response()->json($userDetail);
+        } else {
+            return response()->json(['error' => 'User not found'], 404);
         }
     }
 }
