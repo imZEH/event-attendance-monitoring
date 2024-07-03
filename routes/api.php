@@ -13,4 +13,4 @@ Route::prefix('v1')->group(function (){
     Route::apiResource('userdetails', UserController::class);
 });
 
-Route::post('login', [AuthController::class, '  ']);
+Route::post('login', [AuthController::class, 'login']);
