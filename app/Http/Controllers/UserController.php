@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\UserDetail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -30,9 +31,32 @@ class UserController extends Controller
      */
     public function store(UserPostRequest $request)
     {
-        $validated = $request->validated();
-        $userDetails = UserDetail::create($validated);
-        return UserDetailsResource::make($userDetails);
+        // Create user in the User table
+        $user = User::create([
+            'name' => $request->input('firstname') . ' ' . $request->input('lastname'),
+            'email' => $request->input('email'),
+            'password' => bcrypt($request->input('password')),
+        ]);
+
+        // Create user details in the UserDetail table
+        $userDetail = UserDetail::create([
+            'firstname' => $request->input('firstname'),
+            'lastname' => $request->input('lastname'),
+            'middlename' => $request->input('middlename'),
+            'studentId' => $request->input('studentId'),
+            'birthday' => $request->input('birthday'),
+            'yearlevel' => $request->input('yearlevel'),
+            'course' => $request->input('course'),
+            'userType' => $request->input('userType'),
+            'userId' => $user->id,
+        ]);
+
+        // $mergedData = array_merge($user->toArray(), $userDetail->toArray());
+
+        return response()->json([
+            'message' => 'User created successfully',
+            'status_code' => 201
+        ], 201);
     }
 
     /**
@@ -62,19 +86,42 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, $id)
     {
+        $user = User::findOrFail($id);
 
-        $userDetails = UserDetail::find($id);
-    
-        if (!$userDetails) {
-            return response()->json(['message' => 'User details not found'], 404);
+        // Update user details
+        $user->name = $request->input('firstname') . ' ' . $request->input('lastname');
+        $user->email = $request->input('email');
+
+        // Update password if provided
+        if ($request->has('password')) {
+            $user->password = bcrypt($request->input('password'));
         }
 
-        $data =[
-            'firstname' => $request->firstname
-        ];
+        $user->save();
 
-       $userDetails->update($data);
-        return UserDetailsResource::make($userDetails);
+        // Update user details if provided
+        if ($request->has('firstname') || $request->has('lastname') ||
+            $request->has('middlename') || $request->has('studentId') ||
+            $request->has('birthday') || $request->has('yearlevel') ||
+            $request->has('course') || $request->has('userType')) {
+
+            $userDetail = UserDetail::where('userId', $user->id)->firstOrFail();
+            $userDetail->update([
+                'firstname' => $request->input('firstname'),
+                'lastname' => $request->input('lastname'),
+                'middlename' => $request->input('middlename'),
+                'studentId' => $request->input('studentId'),
+                'birthday' => $request->input('birthday'),
+                'yearlevel' => $request->input('yearlevel'),
+                'course' => $request->input('course'),
+                'userType' => $request->input('userType'),
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'User updated successfully',
+            'data' => $user,
+        ], 200);
     }
 
     /**

@@ -13,4 +13,23 @@ $(document).ready(function () {
             $this.closest('.nav-item').addClass('active');
         }
     });
+
+    const sidebar = $('#accordionSidebar');
+    const toggleButton = $('#sidebarToggle');
+
+    // Check localStorage for sidebar state
+    if (localStorage.getItem('sidebarToggled') === 'true') {
+        sidebar.addClass('toggled');
+    }
+
+    // Add click event listener to the toggle button
+    toggleButton.on('click', function () {
+        console.log("test");
+        if (sidebar.hasClass('toggled')) {
+            localStorage.setItem('sidebarToggled', true);
+        } else {
+            localStorage.setItem('sidebarToggled', false);
+        }
+    });
+
 });

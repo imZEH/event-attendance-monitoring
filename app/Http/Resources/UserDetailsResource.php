@@ -17,7 +17,15 @@ class UserDetailsResource extends JsonResource
         return [
             'id' => $this->id,
             'firstname' => $this->firstname,
-            'lastname' => $this->lastname
+            'lastname' => $this->lastname,
+            'middlename' => $this->middlename,
+            'studentId' => $this->studentId,
+            'birthday' => $this->birthday,
+            'yearlevel' => $this->yearlevel,
+            'course' => $this->course,
+            'userType' => $this->userType,
+            'userId' => $this->userId,
+            'created_at' => $this->created_at
         ];
     }
 }

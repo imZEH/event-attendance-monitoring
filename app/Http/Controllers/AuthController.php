@@ -20,14 +20,14 @@ class AuthController extends Controller
 
             $userDetail = $this->getUserById($userId);
 
-            return response()->json(['data' => $userDetail->original], 200);
+            return response()->json(['data' => $userDetail->original, 'status' =>  200], 200);
         } else {
-            return response()->json( [ 'error' => 'Unauthorized' ], 401 );
+            return response()->json( [ 'error' => 'Unauthorized', 'status' => 401 ], 401 );
         }
     }
 
-    public function getUserById($id) {
-        $userDetail = UserDetail::find($id);
+    private function getUserById($id) {
+        $userDetail = UserDetail::where('userId', $id)->first();
     
         if($userDetail) {
             return response()->json($userDetail);

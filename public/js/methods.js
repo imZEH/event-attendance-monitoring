@@ -1,5 +1,23 @@
 // GET request
-function _GET(apiEndpoint, id) {
+function _GET(apiEndpoint, successCallback, errorCallback) {
+    $.ajax({
+        url: apiEndpoint,
+        type: 'GET',
+        success: function (response) {
+            if (successCallback) {
+                successCallback(response);
+            }
+        },
+        error: function (error) {
+            if (errorCallback) {
+                errorCallback(error);
+            }
+        }
+    });
+}
+
+// GET request
+function _GETById(apiEndpoint, id) {
     var url = apiEndpoint;
     if (id) {
         url += '/' + id;
@@ -8,11 +26,11 @@ function _GET(apiEndpoint, id) {
     $.ajax({
         url: url,
         type: 'GET',
-        success: function(response) {
+        success: function (response) {
             console.log('GET success:', response);
             return response;
         },
-        error: function(error) {
+        error: function (error) {
             console.error('GET error:', error);
             return error
         }
@@ -20,17 +38,21 @@ function _GET(apiEndpoint, id) {
 }
 
 // POST request
-function _POST(apiEndpoint, body) {
+function _POST(apiEndpoint, body, successCallback, errorCallback) {
     $.ajax({
         url: apiEndpoint,
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(body),
-        success: function(response) {
-            console.log('POST success:', response);
+        success: function (response) {
+            if (successCallback) {
+                successCallback(response);
+            }
         },
-        error: function(error) {
-            console.error('POST error:', error);
+        error: function (error) {
+            if (errorCallback) {
+                errorCallback(error);
+            }
         }
     });
 }
@@ -47,10 +69,10 @@ function _PUT(apiEndpoint, body, id) {
         type: 'PUT',
         contentType: 'application/json',
         data: JSON.stringify(body),
-        success: function(response) {
+        success: function (response) {
             console.log('PUT success:', response);
         },
-        error: function(error) {
+        error: function (error) {
             console.error('PUT error:', error);
         }
     });
@@ -66,10 +88,10 @@ function _DELETE(apiEndpoint, id) {
     $.ajax({
         url: apiEndpoint + '/' + id,
         type: 'DELETE',
-        success: function(response) {
+        success: function (response) {
             console.log('DELETE success:', response);
         },
-        error: function(error) {
+        error: function (error) {
             console.error('DELETE error:', error);
         }
     });
