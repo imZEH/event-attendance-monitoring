@@ -17,7 +17,7 @@ function _GET(apiEndpoint, successCallback, errorCallback) {
 }
 
 // GET request
-function _GETById(apiEndpoint, id) {
+function _GETById(apiEndpoint, id, successCallback, errorCallback) {
     var url = apiEndpoint;
     if (id) {
         url += '/' + id;
@@ -27,12 +27,14 @@ function _GETById(apiEndpoint, id) {
         url: url,
         type: 'GET',
         success: function (response) {
-            console.log('GET success:', response);
-            return response;
+            if (successCallback) {
+                successCallback(response);
+            }
         },
         error: function (error) {
-            console.error('GET error:', error);
-            return error
+            if (errorCallback) {
+                errorCallback(error);
+            }
         }
     });
 }
@@ -58,7 +60,7 @@ function _POST(apiEndpoint, body, successCallback, errorCallback) {
 }
 
 // PUT request
-function _PUT(apiEndpoint, body, id) {
+function _PUT(apiEndpoint, body, id, successCallback, errorCallback) {
     if (!id) {
         console.error('PUT error: ID is required');
         return;
@@ -70,16 +72,20 @@ function _PUT(apiEndpoint, body, id) {
         contentType: 'application/json',
         data: JSON.stringify(body),
         success: function (response) {
-            console.log('PUT success:', response);
+            if (successCallback) {
+                successCallback(response);
+            }
         },
         error: function (error) {
-            console.error('PUT error:', error);
+            if (errorCallback) {
+                errorCallback(error);
+            }
         }
     });
 }
 
 // DELETE request
-function _DELETE(apiEndpoint, id) {
+function _DELETE(apiEndpoint, id, successCallback, errorCallback) {
     if (!id) {
         console.error('DELETE error: ID is required');
         return;
@@ -89,10 +95,14 @@ function _DELETE(apiEndpoint, id) {
         url: apiEndpoint + '/' + id,
         type: 'DELETE',
         success: function (response) {
-            console.log('DELETE success:', response);
+            if (successCallback) {
+                successCallback(response);
+            }
         },
         error: function (error) {
-            console.error('DELETE error:', error);
+            if (errorCallback) {
+                errorCallback(error);
+            }
         }
     });
 }

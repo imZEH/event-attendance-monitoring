@@ -25,7 +25,8 @@ class UserDetailsResource extends JsonResource
             'course' => $this->course,
             'userType' => $this->userType,
             'userId' => $this->userId,
-            'created_at' => $this->created_at
+            'created_at' => $this->created_at,
+            'email' => $this->user->email,
         ];
     }
 }

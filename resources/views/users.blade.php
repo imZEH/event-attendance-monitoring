@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -12,7 +11,7 @@
     <title>Users | Event Attendance Monitoring System</title>
 
     @include('partial.header_css')
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 
 <body id="page-top">
@@ -42,9 +41,7 @@
                     <div class="card shadow mb-4">
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
                             <h4 class="m-0 font-weight-bold text-primary">Users</h4>
-                            <a href="#" data-toggle="modal" data-target="#userModal" class="btn btn-primary">Add
-                                User</a>
-
+                            <button onclick="OpenModal()" class="btn btn-primary">Add User</button>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -78,10 +75,7 @@
     </div>
     <!-- End of Page Wrapper -->
 
-
-
     <!-- USER MODAL HERE -->
-
     <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModal" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -142,7 +136,6 @@
                                 <span id="cpasswordError" class="text-danger"></span>
                             </div>
                         </div>
-
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -159,7 +152,6 @@
     <!-- Logout Modal-->
     @include('partial.logout_modal')
 
-
     @include('partial.footer_js')
     @vite('resources/js/auth.js')
     @vite('resources/js/sidebar.js')
@@ -174,6 +166,11 @@
             }
             document.getElementById("password").value = password;
             document.getElementById("cpassword").value = password;
+        }
+
+        function OpenModal(){
+            clearFields();
+            $('#userModal').modal('show');
         }
 
         function togglePasswordVisibility(fieldId, cpasswordId, showiconId, hideIconId) {
@@ -205,8 +202,9 @@
             var email = $('#email').val().trim();
             var password = $('#password').val().trim();
             var cpassword = $('#cpassword').val().trim();
+            var userId = $('#saveBtn').data('userId');
 
-            var isValid = validation(firstname, lastName, userType, email, password, cpassword);
+            var isValid = validation(firstname, lastName, userType, email, password, cpassword, userId);
 
             var postData = {
                 "firstname": firstname,
@@ -217,67 +215,103 @@
                 "yearlevel": "",
                 "course": "",
                 "userType": userType,
-                "userId": 1,
+                "userId": userId,
                 "email": email,
                 "password": password
             }
 
             if (isValid) {
-                _POST('/api/v1/userdetails', postData, function (resp) {
-                    if (resp.status_code === 201) {
-                        $.toast({
-                            heading: 'Success',
-                            text: resp.message,
-                            showHideTransition: 'slide',
-                            icon: 'success',
-                            position: 'top-right'
-                        });
-                        clearFields();
-                        $('#userModal').modal('hide');
-                    } else {
-                        $.toast({
-                            heading: 'Error',
-                            text: 'Unable to save user\'s information',
-                            showHideTransition: 'fade',
-                            icon: 'error',
-                            position: 'top-right'
-                        });
-                    }
-                }, function (error) {
-                    $.toast({
-                        heading: 'Error',
-                        text: 'Unable to communicate with server',
-                        showHideTransition: 'fade',
-                        icon: 'error',
-                        position: 'top-right'
+                if (userId != 0) {
+                    // Update existing user
+                    _PUT('/api/v1/userdetails', postData, userId, function (resp) {
+                        if (resp.status_code === 200) {
+                            $.toast({
+                                heading: 'Success',
+                                text: resp.message,
+                                showHideTransition: 'slide',
+                                icon: 'success',
+                                position: 'top-right'
+                            });
+                            clearFields();
+                            $('#userModal').modal('hide');
+                            $('#userTable').DataTable().ajax.reload();
+                        } else {
+                            $.toast({
+                                heading: 'Error',
+                                text: 'Unable to update user\'s information',
+                                showHideTransition: 'fade',
+                                icon: 'error',
+                                position: 'top-right'
+                            });
+                        }
+                    }, function (error) {
+                        for (let field in error.responseJSON.errors) {
+                            error.responseJSON.errors[field].forEach(error => {
+                                $.toast({
+                                    heading: 'Error',
+                                    text: error,
+                                    showHideTransition: 'fade',
+                                    icon: 'error',
+                                    position: 'top-right'
+                                });
+                            });
+                        }
                     });
-                });
+                } else {
+                    // Create new user
+                    _POST('/api/v1/userdetails', postData, function (resp) {
+                        if (resp.status_code === 201) {
+                            $.toast({
+                                heading: 'Success',
+                                text: resp.message,
+                                showHideTransition: 'slide',
+                                icon: 'success',
+                                position: 'top-right'
+                            });
+                            clearFields();
+                            $('#userModal').modal('hide');
+                            $('#userTable').DataTable().ajax.reload();
+                        } else {
+                            $.toast({
+                                heading: 'Error',
+                                text: 'Unable to save user\'s information',
+                                showHideTransition: 'fade',
+                                icon: 'error',
+                                position: 'top-right'
+                            });
+                        }
+                    }, function (error) {
+                        for (let field in error.responseJSON.errors) {
+                            error.responseJSON.errors[field].forEach(error => {
+                                $.toast({
+                                    heading: 'Error',
+                                    text: error,
+                                    showHideTransition: 'fade',
+                                    icon: 'error',
+                                    position: 'top-right'
+                                });
+                            });
+                        }
+                    });
+                }
             }
         }
 
-        function validation(firstname, lastName, userType, email, password, cpassword) {
-            // Validation flags
-            var isValid = true;
 
-            // Validate First Name
+        function validation(firstname, lastName, userType, email, password, cpassword, userId) {
+            var isValid = true;
             if (firstname === '') {
                 $('#firstNameError').text('Please enter First Name');
                 isValid = false;
             }
-
-            // Validate Last Name
             if (lastName === '') {
                 $('#lastNameError').text('Please enter Last Name');
                 isValid = false;
             }
-
-            // Validate User Type
             if (userType === 'Select') {
                 $('#userTypeError').text('Please select User Type');
                 isValid = false;
             }
-
-            // Validate Email
             if (email === '') {
                 $('#emailError').text('Please enter Email');
                 isValid = false;
@@ -286,20 +320,20 @@
                 isValid = false;
             }
 
-            // Validate Password
-            if (password === '') {
-                $('#passwordError').text('Please enter Password');
-                isValid = false;
+            if (userId == null) {
+                if (password === '') {
+                    $('#passwordError').text('Please enter Password');
+                    isValid = false;
+                }
+                if (cpassword === '') {
+                    $('#cpasswordError').text('Please confirm Password');
+                    isValid = false;
+                } else if (password !== cpassword) { // Check if passwords match
+                    $('#cpasswordError').text('Passwords do not match');
+                    isValid = false;
+                }
             }
 
-            // Validate Confirm Password
-            if (cpassword === '') {
-                $('#cpasswordError').text('Please confirm Password');
-                isValid = false;
-            } else if (password !== cpassword) { // Check if passwords match
-                $('#cpasswordError').text('Passwords do not match');
-                isValid = false;
-            }
 
             return isValid;
         }
@@ -312,6 +346,9 @@
             $('#email').val('');
             $('#password').val('');
             $('#cpassword').val('');
+
+            $('#saveBtn').data('userId', 0);
+            $('.text-danger').text('');
         }
 
         // Helper function to validate email format
@@ -326,58 +363,106 @@
         }
 
         $(document).ready(function () {
-            function getUsers() {
-                _GET('/api/v1/userdetails', function (resp) {
-                    $('#userTable').DataTable({
-                        "data": resp.data, // Specify the data array
-                        "columns": [{
-                                "data": "firstname",
-                                "render": function (data, type, row) {
-                                    return data + ' ' + row.lastname;
-                                }
-                            },
-                            {
-                                "data": "userType"
-                            },
-                            {
-                                "data": "created_at",
-                                "render": function (data) {
-                                    return formatDate(data); // Format date if needed
-                                }
-                            },
-                            {
-                                "data": null,
-                                "defaultContent": ""
-                            } // Placeholder for action buttons
-                        ],
-                        "paging": true,
-                        "lengthChange": true,
-                        "searching": true,
-                        "ordering": true,
-                        "info": true,
-                        "autoWidth": false,
-                        "responsive": true,
-                        "language": {
-                            "paginate": {
-                                "next": "&gt;",
-                                "previous": "&lt;"
-                            },
-                            "search": "Search:",
-                            "lengthMenu": "Show _MENU_ entries"
+            var table = $('#userTable').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+                "language": {
+                    "paginate": {
+                        "next": "&gt;",
+                        "previous": "&lt;"
+                    },
+                    "search": "Search:",
+                    "lengthMenu": "Show _MENU_ entries"
+                },
+                "ajax": {
+                    "url": "/api/v1/userdetails",
+                    "dataSrc": "data"
+                },
+                "columns": [{
+                        "data": "firstname",
+                        "render": function (data, type, row) {
+                            return data + ' ' + row.lastname;
                         }
-                    });
-                }, function (error) {
-                    $.toast({
-                        heading: 'Error',
-                        text: 'Unable to communicate with server',
-                        showHideTransition: 'fade',
-                        icon: 'error',
-                        position: 'top-right'
-                    });
-                });
-            }
+                    },
+                    {
+                        "data": "userType"
+                    },
+                    {
+                        "data": "created_at",
+                        "render": function (data) {
+                            return formatDate(data);
+                        }
+                    },
+                    {
+                        "data": null,
+                        "defaultContent": `
+                            <button class="btn btn-warning btn-circle edit-btn" title="Edit">
+                                <i class="far fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-circle delete-btn" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>`
+                    }
+                ]
+            });
 
-            getUsers(); // display all users
+            $('#userTable tbody').on('click', 'button.edit-btn', function () {
+                clearFields();
+                var data = table.row($(this).parents('tr')).data();
+                var userDetails = _GETById(`/api/v1/userdetails`, data.id, function (resp) {
+                    var data = resp.data;
+
+                    $('#firstName').val(data.firstname);
+                    $('#middleName').val(data.middlename);
+                    $('#lastName').val(data.lastname);
+                    $('#userType').val(data.userType);
+                    $('#email').val(data.email);
+                    $('#userModal').modal('show');
+
+                    $('#saveBtn').data('userId', data.id);
+
+                });
+            });
+
+            $('#userTable tbody').on('click', 'button.delete-btn', function () {
+                var data = table.row($(this).parents('tr')).data();
+                var userId = data.id; // Assuming the user ID is available in the data
+                if (confirm('Are you sure you want to delete this user?')) {
+                    _DELETE(`/api/v1/userdetails`, userId, function (resp) {
+                        if (resp.status_code === 200) {
+                            $.toast({
+                                heading: 'Success',
+                                text: resp.message,
+                                showHideTransition: 'slide',
+                                icon: 'success',
+                                position: 'top-right'
+                            });
+                            table.ajax.reload();
+                        } else {
+                            $.toast({
+                                heading: 'Error',
+                                text: 'Unable to delete user',
+                                showHideTransition: 'fade',
+                                icon: 'error',
+                                position: 'top-right'
+                            });
+                        }
+                    }, function (error) {
+                        $.toast({
+                            heading: 'Error',
+                            text: 'Unable to communicate with server',
+                            showHideTransition: 'fade',
+                            icon: 'error',
+                            position: 'top-right'
+                        });
+                    });
+                }
+            });
         });
     </script>
 </body>
