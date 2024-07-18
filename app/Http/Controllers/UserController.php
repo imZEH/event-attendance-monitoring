@@ -13,18 +13,18 @@ use App\Http\Resources\UserDetailsResource;
 class UserController extends Controller
  {
     /**
-    * Display a listing of the resource.
+    * Display a listing of the User.
     *
     * @return Response
     */
 
     public function index()
- {
+    {
         return UserDetailsResource::collection( UserDetail::all() );
     }
 
     /**
-    * Store a newly created resource in storage.
+    * Store a newly created User in storage.
     *
     * @param StorePostRequest $request
     * @return Response
@@ -32,7 +32,7 @@ class UserController extends Controller
     */
 
     public function store( UserPostRequest $request )
- {
+    {
         // Create user in the User table
         $user = User::create( [
             'name' => $request->input( 'firstname' ) . ' ' . $request->input( 'lastname' ),
@@ -62,14 +62,14 @@ class UserController extends Controller
     }
 
     /**
-    * Display the specified resource.
+    * Display the specified User.
     *
     * @param Post $post
     * @return Response
     */
 
     public function show( $id )
- {
+    {
         $userDetails = UserDetail::with( 'user' )->find( $id );
 
         if ( !$userDetails ) {
@@ -80,7 +80,7 @@ class UserController extends Controller
     }
 
     /**
-    * Update the specified resource in storage.
+    * Update the specified User in storage.
     *
     * @param UpdatePostRequest $request
     * @param Post $post
@@ -89,7 +89,7 @@ class UserController extends Controller
     */
 
     public function update( UserUpdateRequest $request, $id )
- {
+    {
         // Find the user details by ID
         $userDetail = UserDetail::find( $id );
 
@@ -140,14 +140,14 @@ class UserController extends Controller
     }
 
     /**
-    * Remove the specified resource from storage.
+    * Remove the specified User from storage.
     *
     * @param Post $post
     * @return Response
     */
 
     public function destroy( $id )
- {
+    {
         // Find the user details by ID
         $userDetail = UserDetail::find( $id );
 
