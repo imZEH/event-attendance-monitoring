@@ -358,9 +358,7 @@
             return emailRegex.test(email);
         }
 
-        function formatDate(dateString) {
-            return moment(dateString).format('MM/DD/yyyy hh:mm:ss A');
-        }
+        
 
         $(document).ready(function () {
             var table = $('#userTable').DataTable({
@@ -401,10 +399,10 @@
                     {
                         "data": null,
                         "defaultContent": `
-                            <button class="btn btn-warning btn-circle edit-btn" title="Edit">
+                            <button class="btn btn-sm btn-warning btn-circle edit-btn" title="Edit">
                                 <i class="far fa-edit"></i>
                             </button>
-                            <button class="btn btn-danger btn-circle delete-btn" title="Delete">
+                            <button class="btn btn-sm btn-danger btn-circle delete-btn" title="Delete">
                                 <i class="fas fa-trash"></i>
                             </button>`
                     }

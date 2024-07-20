@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\User;
+use App\Models\UserDetail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -16,19 +16,19 @@ class Events extends Model
         'eventName',
         'location',
         'description',
-        'eventDate',
-        'startTimeMorning',
-        'endTimeMorning',
-        'gracePeriodMorning',
-        'startTimeAfternoon',
-        'endTimeAfternoon',
-        'gracePeriodAfternoon',
-        'eventType',
+        'eventStartDate',
+        'eventEndDate',
+        'startTimeAM',
+        'endTimeAM',
+        'gracePeriodAM',
+        'startTimePM',
+        'endTimePM',
+        'gracePeriodPM',
         'userId'
     ];
 
     public function user()
     {
-        return $this->belongsTo( User::class, 'userId' );
+        return $this->belongsTo( UserDetail::class, 'userId' );
     }
 }

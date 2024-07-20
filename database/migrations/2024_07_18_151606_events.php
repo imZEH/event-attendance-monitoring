@@ -16,16 +16,16 @@ return new class extends Migration
             $table->string('eventName');
             $table->string('location')->nullable();
             $table->string('description')->nullable();
-            $table->datetime('eventDate')->nullable();
-            $table->datetime('startTimeMorning')->nullable();
-            $table->datetime('endTimeMorning')->nullable();
-            $table->integer('gracePeriodMorning')->nullable();
-            $table->datetime('startTimeAfternoon')->nullable();
-            $table->datetime('endTimeAfternoon')->nullable();
-            $table->integer('gracePeriodAfternoon')->nullable();
-            $table->string('eventType')->nullable(); // WholeDay or HalfDay
+            $table->datetime('eventStartDate')->nullable();
+            $table->datetime('eventEndDate')->nullable();
+            $table->string('startTimeAM')->nullable();
+            $table->string('endTimeAM')->nullable();
+            $table->integer('gracePeriodAM')->nullable();
+            $table->string('startTimePM')->nullable();
+            $table->string('endTimePM')->nullable();
+            $table->integer('gracePeriodPM')->nullable();
             $table->unsignedBigInteger('userId');
-            $table->foreign('userId')->references('id')->on('users');
+            $table->foreign('userId')->references('id')->on('user_details');
             $table->timestamps();
         });
     }

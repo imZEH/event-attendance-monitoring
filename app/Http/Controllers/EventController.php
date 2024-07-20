@@ -3,31 +3,33 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Events as MEvents;
 use App\Http\Controllers\Controller;
 use Laravel\Prompts\Concerns\Events;
 use App\Http\Resources\EventResource;
+use App\Http\Requests\EventPostRequest;
 
 class EventController extends Controller
 {
     public function index()
     {
-        return EventResource::collection( Events::all() );
+        return EventResource::collection( MEvents::all() );
     }
 
     public function store( EventPostRequest $request )
     {
-        $userDetail = Events::create( [
+        $userDetail = MEvents::create( [
             'eventName' => $request->input( 'eventName' ),
             'location' => $request->input( 'location' ),
             'description' => $request->input( 'description' ),
-            'eventDate' => $request->input( 'eventDate' ),
-            'startTimeMorning' => $request->input( 'startTimeMorning' ),
-            'endTimeMorning' => $request->input( 'endTimeMorning' ),
-            'gracePeriodMorning' => $request->input( 'gracePeriodMorning' ),
-            'startTimeAfternoon' => $request->input( 'startTimeAfternoon' ),
-            'endTimeAfternoon' => $request->input( 'endTimeAfternoon' ),
-            'gracePeriodAfternoon' => $request->input( 'gracePeriodAfternoon' ),
-            'eventType' => $request->input( 'eventType' ),
+            'eventStartDate' => $request->input( 'eventStartDate' ),
+            'eventEndDate' => $request->input( 'eventEndDate' ),
+            'startTimeAM' => $request->input( 'startTimeAM' ),
+            'endTimeAM' => $request->input( 'endTimeAM' ),
+            'gracePeriodAM' => $request->input( 'gracePeriodAM' ),
+            'startTimePM' => $request->input( 'startTimePM' ),
+            'endTimePM' => $request->input( 'endTimePM' ),
+            'gracePeriodPM' => $request->input( 'gracePeriodPM' ),
             'userId' => $request->input( 'userId' )
         ] );
 
@@ -39,9 +41,9 @@ class EventController extends Controller
 
     public function show( $id )
     {
-        $events = Events::with( 'user' )->find( $id );
+        $events = MEvents::find( $id );
 
-        if ( !$userDetails ) {
+        if ( !$events ) {
             return response()->json( [ 'message' => 'Event details not found' ], 404 );
         }
 
@@ -51,7 +53,7 @@ class EventController extends Controller
     public function update( EventPostRequest $request, $id )
     {
         // Find the user details by ID
-        $event = Events::find( $id );
+        $event = MEvents::find( $id );
 
         if ( !$event ) {
             return response()->json( [
@@ -63,14 +65,14 @@ class EventController extends Controller
         $event->eventName = $request->input( 'eventName' );
         $event->location = $request->input( 'location' );
         $event->description = $request->input( 'description' );
-        $event->eventDate = $request->input( 'eventDate' );
-        $event->startTimeMorning = $request->input( 'startTimeMorning' );
-        $event->endTimeMorning = $request->input( 'endTimeMorning' );
-        $event->gracePeriodMorning = $request->input( 'gracePeriodMorning' );
-        $event->startTimeAfternoon = $request->input( 'startTimeAfternoon' );
-        $event->endTimeAfternoon = $request->input( 'endTimeAfternoon' );
-        $event->gracePeriodAfternoon = $request->input( 'gracePeriodAfternoon' );
-        $event->eventType = $request->input( 'eventType' );
+        $event->eventStartDate = $request->input( 'eventStartDate' );
+        $event->eventEndDate = $request->input( 'eventEndDate' );
+        $event->startTimeAM = $request->input( 'startTimeAM' );
+        $event->endTimeAM = $request->input( 'endTimeAM' );
+        $event->gracePeriodAM = $request->input( 'gracePeriodAM' );
+        $event->startTimePM = $request->input( 'startTimePM' );
+        $event->endTimePM = $request->input( 'endTimePM' );
+        $event->gracePeriodPM = $request->input( 'gracePeriodPM' );
         $event->userId = $request->input( 'userId' );
 
         $event->save();
@@ -85,7 +87,7 @@ class EventController extends Controller
     public function destroy( $id )
     {
         // Find the user details by ID
-        $events = Events::find( $id );
+        $events = MEvents::find( $id );
 
         if ( !$events ) {
             return response()->json( [

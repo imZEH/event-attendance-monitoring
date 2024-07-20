@@ -10,5 +10,17 @@
 <link href="../css/sb-admin-2.min.css" rel="stylesheet">
 <link href="../css/jquery.toast.min.css" rel="stylesheet">
 
+
 <!-- Custom styles for this page -->
 <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+<style>
+    .vertical-line {
+        border-left: 1px solid #dee2e6;
+        /* Color and thickness of the line */
+        height: 100%;
+        /* Full height of the parent */
+        margin: 0 1rem;
+        /* Adjust margin to create space around the line */
+    }
+</style>
