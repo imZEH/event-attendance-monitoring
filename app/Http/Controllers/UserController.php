@@ -50,6 +50,7 @@ class UserController extends Controller
             'yearlevel' => $request->input( 'yearlevel' ),
             'course' => $request->input( 'course' ),
             'userType' => $request->input( 'userType' ),
+            'branch' => $request->input( 'branch' ),
             'userId' => $user->id,
         ] );
 

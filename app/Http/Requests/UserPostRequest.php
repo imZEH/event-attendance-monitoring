@@ -31,6 +31,7 @@ class UserPostRequest extends FormRequest
             'birthday' => 'nullable|string',
             'yearlevel' => 'nullable|string',
             'course' => 'nullable|string',
+            'branch' => 'nullable|string',
             'userType' => 'string',
             'userId' => 'int',
             'email' => 'required|string|unique:users,email',
